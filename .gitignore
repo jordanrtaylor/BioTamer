@@ -1,0 +1,19 @@
+# Unity auto-generated files to ignore
+Library/
+Temp/
+Logs/
+Obj/
+Build/
+Builds/
+Packages/
+UserSettings/
+MemoryCaptures/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.pidb
+*.suo
+*.user
+*.unityproj
+*.orig
