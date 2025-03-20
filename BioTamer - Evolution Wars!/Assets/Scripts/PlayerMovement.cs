@@ -20,5 +20,6 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        rb.rotation = 0f; // Force rotation to always stay at 0, prevents player spinning when clipped on an edge.
     }
 }
