@@ -3,23 +3,52 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    private Vector2 movement;
-    private Rigidbody2D rb;
+    private bool isMoving = false;
+    private Vector2 input;
 
-    void Start()
+    public LayerMask solidObjectsLayer; // Optional: for collision
+    public float stepSize = 1f;         // Distance per step
+
+    private void Update()
     {
-        rb = GetComponent<Rigidbody2D>();
+        if (!isMoving)
+        {
+            input.x = Input.GetAxisRaw("Horizontal");
+            input.y = Input.GetAxisRaw("Vertical");
+
+            // Prevent diagonal movement
+            if (input.x != 0) input.y = 0;
+
+            if (input != Vector2.zero)
+            {
+                Vector3 targetPos = transform.position + new Vector3(input.x, input.y, 0) * stepSize;
+
+                // Optional: Check for collision here
+                // if (IsWalkable(targetPos))
+                StartCoroutine(Move(targetPos));
+            }
+        }
     }
 
-    void Update()
+    private System.Collections.IEnumerator Move(Vector3 targetPos)
     {
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+        isMoving = true;
+
+        while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        transform.position = targetPos;
+        isMoving = false;
     }
 
-    void FixedUpdate()
+    // Optional collision check (add a collider to walls and set up the layer)
+    /*
+    private bool IsWalkable(Vector3 targetPos)
     {
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
-        rb.rotation = 0f; // Force rotation to always stay at 0, prevents player spinning when clipped on an edge.
+        return !Physics2D.OverlapCircle(targetPos, 0.1f, solidObjectsLayer);
     }
+    */
 }
